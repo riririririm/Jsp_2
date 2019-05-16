@@ -5,10 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.rim.util.DBConnector;
 
 public class PointDAO {
+	
 	//insert
 	public int insert(PointDTO dto) throws Exception {
 		Connection conn=DBConnector.getConnection();
@@ -92,12 +94,17 @@ public class PointDAO {
 	}
 	
 	//selectList
-	public ArrayList<PointDTO> selectList() throws Exception {
+	public ArrayList<PointDTO> selectList(int startRow, int lastRow) throws Exception {
 		Connection conn = DBConnector.getConnection();
-		String sql = "select * from point order by idx asc";
+		String sql = "select * from "
+				+ "(select rownum R, p.* from "
+				+ "(select * from point order by idx desc)p) "
+				+ "where R between ? and ?";
 		
 		PreparedStatement pst = conn.prepareStatement(sql);
-				
+		pst.setInt(1, startRow);
+		pst.setInt(2, lastRow);
+		
 		ResultSet rs = pst.executeQuery();
 		
 		PointDTO dto=null;
@@ -118,5 +125,22 @@ public class PointDAO {
 		DBConnector.disConnect(rs, pst, conn);
 		
 		return arr;
+	}
+	
+	public int countTotalRow() throws Exception {
+		int count=0;
+		
+		Connection conn = DBConnector.getConnection();
+		String sql = "select count(*) from point";
+		
+		PreparedStatement pst = conn.prepareStatement(sql);
+		ResultSet rs = pst.executeQuery();
+		
+		rs.next();
+		count = rs.getInt("count(*)");
+		
+		DBConnector.disConnect(rs, pst, conn);
+		
+		return count;
 	}
 }

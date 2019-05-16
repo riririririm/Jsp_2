@@ -26,32 +26,21 @@
   		
   		PointDAO dao = new PointDAO();
   
-  		int result=dao.update(dto);
+  		int result=0;
 
   		
   		String msg="update fail";
   		if(result>0){
   			msg="update success";
+  			request.setAttribute("message", msg);
+  			request.setAttribute("path", "./point.jsp");
+  			
+  			RequestDispatcher view = request.getRequestDispatcher("../common/test/result.jsp");//이동해야할 경로
+  	    	view.forward(request, response); 
+  		}else{
+  			
+  			response.sendRedirect("./pointUpdate.jsp");
   		}
   				
   
   %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript">
-	
-	alert("<%=msg%>");
-	location.href="./point.jsp";
-
-
-</script>
-</head>
-<body>
-
-
-
-</body>
-</html>

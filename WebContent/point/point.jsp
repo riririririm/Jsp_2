@@ -10,8 +10,53 @@
     
  <%
  	PointDAO dao = new PointDAO();
- 	ArrayList<PointDTO> arr = new ArrayList<PointDTO>();
- 	arr =dao.selectList();
+	ArrayList<PointDTO> arr = new ArrayList<PointDTO>();
+	
+ 	int curPage=Integer.parseInt(request.getParameter("curPage"));
+ 	int perPage=10;
+ 	int startRow = perPage*(curPage-1)+1;
+ 	int lastRow = curPage*perPage;
+ 	
+ 	//총 글 개수
+ 	int totalCount = dao.countTotalRow();
+ 	
+ 	//홈페이지 갯수
+ 	int totalPage = totalCount/perPage;
+ 	if(totalCount%perPage!=0){
+ 		totalPage+=1;
+ 	}
+ 	
+ 	//block당 숫자의 갯수
+ 	int perBlock=5;
+ 	
+ 	//총 block의 갯수(block:1~5 /6~10...)
+ 	int totalBlock = totalPage/perBlock;
+ 	if(totalPage%perBlock!=0){
+ 		totalBlock++;
+ 	}
+ 	
+ 	
+ 	int curBlock = curPage/perBlock;
+ 	if(curPage%perBlock!=0){
+ 		curBlock++;
+ 	}
+ 	
+ 	//curBlock에서 startNum, lastNum 찾기
+ 	int startNum = perBlock*(curBlock-1)+1;
+ 	int lastNum = curBlock*perBlock;
+ 	
+ 	if(curBlock==totalBlock)
+ 		lastNum=totalPage;
+ 	
+ 	if(startNum<0){
+ 		startNum=1;
+ 		lastNum=5;
+ 		curPage=1;	
+ 		startRow=1;
+ 		lastRow=10;
+ 	}
+ 	
+ 	arr =dao.selectList(startRow, lastRow);
 
  %>   
 <!DOCTYPE html>
@@ -80,6 +125,20 @@
  				<%} %>
  				</tbody>
  			</table>		
+ 		</div>
+ 		
+ 		<div>
+ 			<%if(curBlock>1){ %>
+ 				<a href="./point.jsp?curPage=<%=startNum-1%>">이전</a>
+ 			<% }%>
+ 				
+ 			<% for(int i=startNum;i<=lastNum;i++){ %>
+ 				<a href="./point.jsp?curPage=<%=i%>"><%=i %></a>
+ 			<% } %>
+ 			
+ 			<%if(curBlock<totalBlock){ %>
+ 				<a href="./point.jsp?curPage=<%=lastNum+1%>">다음</a>
+ 			<% }%>
  		</div>
  			
  	</div>
