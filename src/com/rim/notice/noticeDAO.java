@@ -15,13 +15,13 @@ public class noticeDAO {
 
 
 	//selectList()
-	public ArrayList<noticeDTO> selectList(String search, int startRow, int lastRow) throws Exception {
+	public ArrayList<noticeDTO> selectList(String kind, String search, int startRow, int lastRow) throws Exception {
 		ArrayList<noticeDTO> arr = new ArrayList<noticeDTO>();
 		noticeDTO dto = null;
 		Connection conn = DBConnector.getConnection();
 		String sql="select * from "
 				+ "(select rownum R, n.* from "
-				+ "(select * from notice where title like ? order by num desc) n) "
+				+ "(select * from notice where "+kind+" like ? order by num desc) n) "
 				+ "where R between ? and ?";
 		
 		PreparedStatement pst = conn.prepareStatement(sql);
@@ -33,6 +33,7 @@ public class noticeDAO {
 		while(rs.next()) {
 			dto = new noticeDTO();
 			dto.setContents(rs.getString("contents"));
+			
 			dto.setReg_date(rs.getDate("reg_date"));
 			dto.setHit(rs.getInt("hit"));
 			dto.setNum(rs.getInt("num"));
@@ -134,16 +135,17 @@ public class noticeDAO {
 		return result;
 	}
 	
-	public int countTotal() throws Exception {
+	public int countTotal(String kind, String search) throws Exception {
 		int result=0;
 		Connection conn = DBConnector.getConnection();
-		String sql = "select count(*) from notice";
+		String sql = "select count(num) from notice where "+kind+" like ?";
 		
 		PreparedStatement pst = conn.prepareStatement(sql);
+		pst.setString(1, "%"+search+"%");
 		ResultSet rs = pst.executeQuery();
 		
 		rs.next();
-		result = rs.getInt("count(*)");
+		result = rs.getInt("count(num)");
 		
 		
 		return result;

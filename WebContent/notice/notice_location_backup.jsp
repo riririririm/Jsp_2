@@ -6,7 +6,7 @@
     <%
     	noticeDAO dao = new noticeDAO();
     	ArrayList<noticeDTO> arr = new ArrayList<noticeDTO>();
-    	arr = dao.selectList();
+    	//arr = dao.selectList();
     
     %>
 <!DOCTYPE html>

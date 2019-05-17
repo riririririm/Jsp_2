@@ -94,16 +94,17 @@ public class PointDAO {
 	}
 	
 	//selectList
-	public ArrayList<PointDTO> selectList(int startRow, int lastRow) throws Exception {
+	public ArrayList<PointDTO> selectList(String kind, String search, int startRow, int lastRow) throws Exception {
 		Connection conn = DBConnector.getConnection();
 		String sql = "select * from "
 				+ "(select rownum R, p.* from "
-				+ "(select * from point order by idx desc)p) "
+				+ "(select * from point where "+kind+" like ? order by idx desc)p) "
 				+ "where R between ? and ?";
 		
 		PreparedStatement pst = conn.prepareStatement(sql);
-		pst.setInt(1, startRow);
-		pst.setInt(2, lastRow);
+		pst.setString(1, "%"+search+"%");
+		pst.setInt(2, startRow);
+		pst.setInt(3, lastRow);
 		
 		ResultSet rs = pst.executeQuery();
 		
@@ -127,17 +128,18 @@ public class PointDAO {
 		return arr;
 	}
 	
-	public int countTotalRow() throws Exception {
+	public int countTotalRow(String kind, String search) throws Exception {
 		int count=0;
 		
 		Connection conn = DBConnector.getConnection();
-		String sql = "select count(*) from point";
+		String sql = "select count(idx) from point where "+kind+" like ?";
 		
 		PreparedStatement pst = conn.prepareStatement(sql);
+		pst.setString(1, "%"+search+"%");
 		ResultSet rs = pst.executeQuery();
 		
 		rs.next();
-		count = rs.getInt("count(*)");
+		count = rs.getInt("count(idx)");
 		
 		DBConnector.disConnect(rs, pst, conn);
 		

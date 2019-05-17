@@ -9,6 +9,7 @@
     	int curPage;
     	//String kind = request.getParameter("kind");
     	String search = request.getParameter("search");
+    	String kind = request.getParameter("kind");
     	
     	try{
     		curPage= Integer.parseInt(request.getParameter("curPage"));
@@ -21,7 +22,16 @@
     		search="";
     	}
     	
-    	int totalCount = dao.countTotal();
+    	if(kind==null)
+    		kind="title";
+    	else if(kind.equals("c"))
+    		kind="contents";
+    	else if(kind.equals("w"))
+    		kind="writer";
+    	else
+    		kind="title";
+    	
+    	int totalCount = dao.countTotal(kind,search);
     	int perPage=10;
     	
     	int startRow=perPage*(curPage-1)+1;
@@ -56,7 +66,7 @@
      		lastRow=10;
      	}
      	
-    	arr = dao.selectList(search,startRow, lastRow);
+    	arr = dao.selectList(kind,search,startRow, lastRow);
     
     %>
 <!DOCTYPE html>
@@ -125,27 +135,27 @@
 		
 		<div class="row">
 			<form action="./notice.jsp">
-				<select>
+				<select name="kind">
 					<option value="t">제목</option>
 					<option value="w">작성자</option>
 					<option value="c">내용</option>
 				</select>
-				<input type="text">
+				<input type="text" name="search">
 				<button>검색</button>			
 			</form>
 		</div>
 			
 		<div class="row">
  			<%if(curBlock>1){ %>
- 				<a href="./notice.jsp?curPage=<%=startNum-1%>">이전</a>
+ 				<a href="./notice.jsp?curPage=<%=startNum-1%>&kind=<%=kind%>&search=<%=search%>">이전</a>
  			<% }%>
  				
  			<% for(int i=startNum;i<=lastNum;i++){ %>
- 				<a href="./notice.jsp?curPage=<%=i%>" ><%=i %></a>
+ 				<a href="./notice.jsp?curPage=<%=i%>&kind=<%=kind%>&search=<%=search%>" ><%=i %></a>
  			<% } %>
  			
  			<%if(curBlock<totalBlock){ %>
- 				<a href="./notice.jsp?curPage=<%=lastNum+1%>">다음</a>
+ 				<a href="./notice.jsp?curPage=<%=lastNum+1%>&kind=<%=kind%>&search=<%=search%>">다음</a>
  			<% }%>
  		</div>
 		

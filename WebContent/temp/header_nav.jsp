@@ -1,3 +1,4 @@
+<%@page import="com.rim.member.MemberDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -16,21 +17,24 @@
           <li class="nav-item">
             <a class="nav-link" href="<%=application.getContextPath()%>/notice/notice.jsp">Notice</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contact</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Portfolio
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
-              <a class="dropdown-item" href="portfolio-1-col.html">1 Column Portfolio</a>
-              <a class="dropdown-item" href="portfolio-2-col.html">2 Column Portfolio</a>
-              <a class="dropdown-item" href="portfolio-3-col.html">3 Column Portfolio</a>
-              <a class="dropdown-item" href="portfolio-4-col.html">4 Column Portfolio</a>
-              <a class="dropdown-item" href="portfolio-item.html">Single Portfolio Item</a>
-            </div>
-          </li>
+          <% MemberDTO dto = (MemberDTO)session.getAttribute("member");
+            	if(dto==null){
+            %>
+            <li class="nav-item">
+            	<a class="nav-link" href="<%=application.getContextPath()%>/member/memberCheck.jsp">Join</a>
+          	</li>
+          	<li class="nav-item">
+           		<a class="nav-link" href="<%=application.getContextPath()%>/member/memberLogin.jsp">Login</a>
+          	</li>
+            <%} else{ %>
+         	<li class="nav-item">
+            	<a class="nav-link" href="<%=application.getContextPath()%>/member/memberMypage.jsp">Mypage</a>
+          	</li>
+          	<li class="nav-item">
+           		<a class="nav-link" href="<%=application.getContextPath()%>/member/memberLogout.jsp">Logout</a>
+          	</li>
+            <%}      %>
+          
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Blog

@@ -12,13 +12,41 @@
  	PointDAO dao = new PointDAO();
 	ArrayList<PointDTO> arr = new ArrayList<PointDTO>();
 	
- 	int curPage=Integer.parseInt(request.getParameter("curPage"));
+ 	int curPage=1;
+ 	String kind = request.getParameter("kind");
+ 	String search = request.getParameter("search");
+ 	
+ 	if(kind==null)
+ 		kind="p_name";
+ 	else if(kind.equals("n"))
+ 		kind="p_name";
+ 	else if(kind.equals("kor"))
+ 		kind="kor";
+ 	else if(kind.equals("eng"))
+ 		kind="eng";
+ 	else if(kind.equals("math"))
+ 		kind="math";
+ 	else
+ 		kind="p_name";
+ 	
+ 	try{
+ 		curPage =Integer.parseInt(request.getParameter("curPage"));
+ 	}catch(Exception e){
+ 		
+ 	}
+ 	
+ 	if(search==null){
+		search="";
+	}
+	
  	int perPage=10;
  	int startRow = perPage*(curPage-1)+1;
  	int lastRow = curPage*perPage;
  	
+ 	
+ 	
  	//총 글 개수
- 	int totalCount = dao.countTotalRow();
+ 	int totalCount = dao.countTotalRow(kind,search);
  	
  	//홈페이지 갯수
  	int totalPage = totalCount/perPage;
@@ -56,7 +84,7 @@
  		lastRow=10;
  	}
  	
- 	arr =dao.selectList(startRow, lastRow);
+ 	arr =dao.selectList(kind,search,startRow, lastRow);
 
  %>   
 <!DOCTYPE html>
@@ -127,17 +155,30 @@
  			</table>		
  		</div>
  		
+ 		<div class="row">
+			<form action="./point.jsp">
+				<select name="kind">
+					<option value="n">이름</option>
+					<option value="kor">국어</option>
+					<option value="eng">영어</option>
+					<option value="math">수학</option>
+				</select>
+				<input type="text" name="search">
+				<button>검색</button>			
+			</form>
+		</div>
+ 		
  		<div>
  			<%if(curBlock>1){ %>
- 				<a href="./point.jsp?curPage=<%=startNum-1%>">이전</a>
+ 				<a href="./point.jsp?curPage=<%=startNum-1%>&kind=<%=kind%>&search=<%=search%>">이전</a>
  			<% }%>
  				
  			<% for(int i=startNum;i<=lastNum;i++){ %>
- 				<a href="./point.jsp?curPage=<%=i%>"><%=i %></a>
+ 				<a href="./point.jsp?curPage=<%=i%>&kind=<%=kind%>&search=<%=search%>"><%=i %></a>
  			<% } %>
  			
  			<%if(curBlock<totalBlock){ %>
- 				<a href="./point.jsp?curPage=<%=lastNum+1%>">다음</a>
+ 				<a href="./point.jsp?curPage=<%=lastNum+1%>&kind=<%=kind%>&search=<%=search%>">다음</a>
  			<% }%>
  		</div>
  			
